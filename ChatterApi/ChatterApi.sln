@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatterApi.Domain", "Chatte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatterApi.DTO", "ChatterApi.DTO\ChatterApi.DTO.csproj", "{2422727C-3CAF-473C-976B-280FC885372F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatterApi.API", "ChatterApi.API\ChatterApi.API.csproj", "{B81E3080-69A7-423C-A37B-817BFE496A92}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2422727C-3CAF-473C-976B-280FC885372F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2422727C-3CAF-473C-976B-280FC885372F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2422727C-3CAF-473C-976B-280FC885372F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B81E3080-69A7-423C-A37B-817BFE496A92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B81E3080-69A7-423C-A37B-817BFE496A92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B81E3080-69A7-423C-A37B-817BFE496A92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B81E3080-69A7-423C-A37B-817BFE496A92}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
