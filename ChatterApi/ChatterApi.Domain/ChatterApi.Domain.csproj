@@ -67,6 +67,12 @@
     <Folder Include="Factories\" />
     <Folder Include="Helpers\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ChatterApi.DTO\ChatterApi.DTO.csproj">
+      <Project>{2422727c-3caf-473c-976b-280fc885372f}</Project>
+      <Name>ChatterApi.DTO</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
