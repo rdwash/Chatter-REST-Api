@@ -56,6 +56,7 @@
     <Compile Include="Entities\User.cs" />
     <Compile Include="Factories\MessageFactory.cs" />
     <Compile Include="Factories\UserFactory.cs" />
+    <Compile Include="Helpers\ListExtensions.cs" />
     <Compile Include="IChatterApiRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepositoryActionResult.cs" />
@@ -65,9 +66,7 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Helpers\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\ChatterApi.DTO\ChatterApi.DTO.csproj">
       <Project>{2422727c-3caf-473c-976b-280fc885372f}</Project>
