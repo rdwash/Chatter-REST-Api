@@ -24,6 +24,15 @@ namespace ChatterApi.Domain
             return (message == null) ? null : message;
         }
 
+        public IQueryable<Message> GetMessages(int userId)
+        {
+            var correctMessages = _ctx.Messages.Where(eg => eg.UserId == userId).FirstOrDefault();
+            if (correctMessages == null)
+                return null;
+
+            return _ctx.Messages.Where(e => e.UserId == userId);
+        }
+
         public IQueryable<Message> GetMessages()
         {
             return _ctx.Messages;
