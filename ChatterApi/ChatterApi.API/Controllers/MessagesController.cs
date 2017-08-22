@@ -35,16 +35,12 @@ namespace ChatterApi.API.Controllers
             {
                 var msgs = _repository.GetMessages();
 
-                if (msgs == null)
-                {
+                if (msgs == null || !msgs.Any())
                     return NotFound();
-                }
 
                 // ensure the page size isn't larger than the maximum.
                 if (pageSize > maxPageSize)
-                {
                     pageSize = maxPageSize;
-                }
 
                 // calculate data for metadata
                 var totalCount = msgs.Count();
@@ -52,19 +48,18 @@ namespace ChatterApi.API.Controllers
 
                 var urlHelper = new UrlHelper(Request);
 
-                var prevLink = page > 1 ? urlHelper.Link("MessageList",
+                var prevLink = page > 1 ? urlHelper.Link("MessagesList",
                     new
                     {
                         page = page - 1,
                         pageSize = pageSize,
                     }) : "";
-                var nextLink = page < totalPages ? urlHelper.Link("MessageList",
+                var nextLink = page < totalPages ? urlHelper.Link("MessagesList",
                     new
                     {
                         page = page + 1,
                         pageSize = pageSize,
                     }) : "";
-
 
                 var paginationHeader = new
                 {
@@ -78,8 +73,8 @@ namespace ChatterApi.API.Controllers
 
                 HttpContext.Current.Response.Headers.Add("X-Pagination", Newtonsoft.Json.JsonConvert.SerializeObject(paginationHeader));
 
-
                 var msgsResult = msgs
+                    .OrderBy(i => i.Id)
                     .Skip(pageSize * (page - 1))
                     .Take(pageSize)
                     .ToList()
@@ -88,9 +83,9 @@ namespace ChatterApi.API.Controllers
                 return Ok(msgsResult);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return InternalServerError();
+                return InternalServerError(ex);
             }
         }
 

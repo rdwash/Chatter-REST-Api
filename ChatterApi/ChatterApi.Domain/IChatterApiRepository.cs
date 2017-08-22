@@ -9,6 +9,8 @@ namespace ChatterApi.Domain
 {
     public interface IChatterApiRepository
     {
+        User GetUser(int id);
+
         Message GetMessage(int id);
         IQueryable<Message> GetMessages();
 

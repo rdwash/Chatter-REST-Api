@@ -18,6 +18,12 @@ namespace ChatterApi.Domain
             _ctx.Configuration.LazyLoadingEnabled = false;
         }
 
+        public User GetUser(int id)
+        {
+            var user = _ctx.Users.Where(u => u.Id == id).FirstOrDefault();
+            return (user == null) ? null : user;
+        }
+
         public Message GetMessage(int id)
         {
             var message = _ctx.Messages.Where(m => m.Id == id).FirstOrDefault();

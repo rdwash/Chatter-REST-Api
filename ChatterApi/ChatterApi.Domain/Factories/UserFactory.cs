@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using ChatterApi.Domain.Entities;
 
 namespace ChatterApi.Domain.Factories
@@ -16,12 +17,13 @@ namespace ChatterApi.Domain.Factories
 
         public DTO.User CreateUser(User user)
         {
-            return new DTO.User()
-            {
-                Id = user.Id,
-                Type = user.Type,
-                Username = user.Username
-            };
+            var userDTO = new DTO.User();
+            userDTO.Id = user.Id;
+            userDTO.Type = user.Type;
+            userDTO.Attributes.Username = user.Username;
+            userDTO.Links.Self = "";
+
+            return userDTO;
         }
 
         public User CreateUser(DTO.User user)
@@ -30,7 +32,7 @@ namespace ChatterApi.Domain.Factories
             {
                 Id = user.Id,
                 Type = user.Type,
-                Username = user.Username
+                Username = user.Attributes.Username
             };
         }
     }

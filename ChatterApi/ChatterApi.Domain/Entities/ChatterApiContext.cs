@@ -19,7 +19,7 @@ namespace ChatterApi.Domain.Entities
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Message>().HasRequired(cm => cm.User);
+            //modelBuilder.Entity<Message>().HasRequired(cm => cm.User);
         }
     }
 }

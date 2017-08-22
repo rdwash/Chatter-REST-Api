@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Web.Http;
+using ChatterApi.API.Handlers;
 using Newtonsoft.Json.Serialization;
 
 namespace ChatterApi.API
@@ -21,10 +22,12 @@ namespace ChatterApi.API
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/json-patch+json"));
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/vnd.api+json"));
 
+            config.MessageHandlers.Add(new ApiWrappingHandler());
+
             // Web API routes
             config.Routes.MapHttpRoute(
                 name: "DefaultRouting",
-                routeTemplate: "api/{controller}/{id}",
+                routeTemplate: "api/v1/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
         }
