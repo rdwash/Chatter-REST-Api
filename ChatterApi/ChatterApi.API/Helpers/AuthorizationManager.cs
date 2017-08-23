@@ -29,6 +29,9 @@ namespace ChatterApi.API.Helpers
                     return
                         Eval(context.Principal.HasClaim("role", "MobileReadUser")
                         || (context.Principal.HasClaim("role", "WebReadUser")));
+                case "Write":
+                    return Eval(context.Principal.HasClaim("role", "MobileWriteUser")
+                        || (context.Principal.HasClaim("role", "WebWriteUser")));
                 default:
                     return Nok();
             }

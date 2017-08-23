@@ -119,6 +119,7 @@ namespace ChatterApi.API.Controllers
             HttpContext.Current.Response.Headers.Add("X-Pagination", Newtonsoft.Json.JsonConvert.SerializeObject(paginationHeader));
         }
 
+        [ResourceAuthorize("Read", "Message")]
         [Route("messages/{userId}/user/{id}")]
         [Route("messages/{id}")]
         public IHttpActionResult Get(int id, int? userId = null)
@@ -158,7 +159,8 @@ namespace ChatterApi.API.Controllers
                 return InternalServerError();
             }
         }
-        
+
+        [ResourceAuthorize("Write", "Message")]
         [Route("messages")]
         public IHttpActionResult Post([FromBody]DTO.IncomingMessage data)
         {
