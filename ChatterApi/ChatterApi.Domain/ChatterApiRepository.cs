@@ -64,48 +64,5 @@ namespace ChatterApi.Domain
                 return new RepositoryActionResult<Message>(null, RepositoryActionStatus.Error, ex);
             }
         }
-
-        public RepositoryActionResult<Message> UpdateMessage(Message message)
-        {
-            try
-            {
-                var existingMessage = _ctx.Messages.Where(m => m.Id == message.Id).FirstOrDefault();
-                if (existingMessage == null)
-                    return new RepositoryActionResult<Message>(message, RepositoryActionStatus.NotFound);
-
-                _ctx.Entry(existingMessage).State = EntityState.Detached;
-
-                _ctx.Messages.Attach(message);
-
-                _ctx.Entry(message).State = EntityState.Modified;
-
-                if (_ctx.SaveChanges() > 0)
-                    return new RepositoryActionResult<Message>(message, RepositoryActionStatus.Updated);
-
-                return new RepositoryActionResult<Message>(null, RepositoryActionStatus.NothingModified, null);
-            }
-            catch (Exception ex)
-            {
-                return new RepositoryActionResult<Message>(null, RepositoryActionStatus.Error, ex);
-            }
-        }
-        public RepositoryActionResult<Message> DeleteMessage(int id)
-        {
-            try
-            {
-                var existingMessage = _ctx.Messages.Where(m => m.Id == id).FirstOrDefault();
-                if (existingMessage == null)
-                    return new RepositoryActionResult<Message>(null, RepositoryActionStatus.NotFound);
-
-                _ctx.Messages.Remove(existingMessage);
-                _ctx.SaveChanges();
-
-                return new RepositoryActionResult<Message>(null, RepositoryActionStatus.Deleted);
-            }
-            catch (Exception ex)
-            {
-                return new RepositoryActionResult<Message>(null, RepositoryActionStatus.Error, ex);
-            }
-        }
     }
 }

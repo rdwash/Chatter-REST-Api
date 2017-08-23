@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Routing;
@@ -10,9 +11,11 @@ using ChatterApi.Domain;
 using ChatterApi.Domain.Entities;
 using ChatterApi.Domain.Factories;
 using Marvin.JsonPatch;
+using Thinktecture.IdentityModel.WebApi;
 
 namespace ChatterApi.API.Controllers
 {
+    
     [RoutePrefix("api/v1")]
     public class MessagesController : ApiController
     {
@@ -27,12 +30,31 @@ namespace ChatterApi.API.Controllers
             _messageFactory = new MessageFactory();
         }
 
-
+        [ResourceAuthorize("Read", "Message")]
         [Route("messages", Name = "MessagesList")]
         public IHttpActionResult Get(int page = 1, int pageSize = maxPageSize)
         {
             try
             {
+                //Claim iss = null, sub = null;
+                //string userId;
+                //var identity = this.User.Identity as ClaimsIdentity;
+
+                //if(identity != null)
+                //{
+                //    iss = identity.FindFirst("iss");
+                //    sub = identity.FindFirst("sub");
+                //}
+
+                //if(iss != null && sub != null)
+                //{
+                //    userId = iss.Value + "_" + sub.Value;
+                //}
+                //else
+                //{
+                //    return StatusCode(HttpStatusCode.Forbidden);
+                //}
+
                 var msgs = _repository.GetMessages();
 
                 if (msgs == null || !msgs.Any())
@@ -42,36 +64,7 @@ namespace ChatterApi.API.Controllers
                 if (pageSize > maxPageSize)
                     pageSize = maxPageSize;
 
-                // calculate data for metadata
-                var totalCount = msgs.Count();
-                var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
-
-                var urlHelper = new UrlHelper(Request);
-
-                var prevLink = page > 1 ? urlHelper.Link("MessagesList",
-                    new
-                    {
-                        page = page - 1,
-                        pageSize = pageSize,
-                    }) : "";
-                var nextLink = page < totalPages ? urlHelper.Link("MessagesList",
-                    new
-                    {
-                        page = page + 1,
-                        pageSize = pageSize,
-                    }) : "";
-
-                var paginationHeader = new
-                {
-                    currentPage = page,
-                    pageSize = pageSize,
-                    totalCount = totalCount,
-                    totalPages = totalPages,
-                    previousPageLink = prevLink,
-                    nextPageLink = nextLink
-                };
-
-                HttpContext.Current.Response.Headers.Add("X-Pagination", Newtonsoft.Json.JsonConvert.SerializeObject(paginationHeader));
+                CreatePaginationLinks(page, pageSize, msgs);
 
                 var msgsResult = msgs
                     .OrderBy(i => i.Id)
@@ -89,7 +82,61 @@ namespace ChatterApi.API.Controllers
             }
         }
 
+        private void CreatePaginationLinks(int page, int pageSize, IQueryable<Message> msgs)
+        {
+            // calculate data for metadata
+            var totalCount = msgs.Count();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
+            var urlHelper = new UrlHelper(Request);
+
+            var firstLink = page != 1 ? urlHelper.Link("MessagesList",
+                new
+                {
+                    page = 1,
+                    pageSize = pageSize,
+                }) : null;
+
+            var prevLink = page > 1 ? urlHelper.Link("MessagesList",
+                new
+                {
+                    page = page - 1,
+                    pageSize = pageSize,
+                }) : null;
+            var nextLink = page < totalPages ? urlHelper.Link("MessagesList",
+                new
+                {
+                    page = page + 1,
+                    pageSize = pageSize,
+                }) : null;
+
+            var lastLink = page != totalPages ? urlHelper.Link("MessagesList",
+                new
+                {
+                    page = page - 1,
+                    pageSize = pageSize,
+                }) : null;
+
+            var paginationHeader = new
+            {
+                currentPage = page,
+                pageSize = pageSize,
+                totalCount = totalCount,
+                totalPages = totalPages,
+                self = urlHelper.Link("MessagesList",
+                new
+                {
+                    page = 1,
+                    pageSize = pageSize,
+                }),
+                first = firstLink,
+                prev = prevLink,
+                next = nextLink,
+                last = lastLink
+            };
+
+            HttpContext.Current.Response.Headers.Add("X-Pagination", Newtonsoft.Json.JsonConvert.SerializeObject(paginationHeader));
+        }
 
         [Route("messages/{userId}/user/{id}")]
         [Route("messages/{id}")]
@@ -130,38 +177,17 @@ namespace ChatterApi.API.Controllers
                 return InternalServerError();
             }
         }
-
-        [Route("messages/{id}")]
-        public IHttpActionResult Delete(int id)
-        {
-            try
-            {
-                var result = _repository.DeleteMessage(id);
-
-                if (result.Status == RepositoryActionStatus.Deleted)
-                    return StatusCode(HttpStatusCode.NoContent);
-
-                if (result.Status == RepositoryActionStatus.NotFound)
-                    return NotFound();
-
-                return BadRequest();
-            }
-            catch (Exception)
-            {
-                return InternalServerError();
-            }
-        }
-
+        
         [Route("messages")]
-        public IHttpActionResult Post([FromBody]DTO.Message message)
+        public IHttpActionResult Post([FromBody]DTO.IncomingMessage data)
         {
             try
             {
-                if (message == null)
+                if (data == null)
                     return BadRequest();
 
                 // map
-                var msg = _messageFactory.CreateMessage(message);
+                var msg = _messageFactory.CreateMessage(data);
 
                 var result = _repository.InsertMessage(msg);
                 if (result.Status == RepositoryActionStatus.Created)
@@ -177,75 +203,6 @@ namespace ChatterApi.API.Controllers
             {
                 return InternalServerError();
             }
-        }
-
-        [Route("messages/{id}")]
-        public IHttpActionResult Put(int id, [FromBody]DTO.Message message)
-        {
-            try
-            {
-                if (message == null)
-                    return BadRequest();
-
-                // map
-                var msg = _messageFactory.CreateMessage(message);
-
-                var result = _repository.UpdateMessage(msg);
-                if (result.Status == RepositoryActionStatus.Updated)
-                {
-                    // map to dto
-                    var updatedMessage = _messageFactory.CreateMessage(result.Entity);
-                    return Ok(updatedMessage);
-                }
-                else if (result.Status == RepositoryActionStatus.NotFound)
-                {
-                    return NotFound();
-                }
-
-                return BadRequest();
-            }
-            catch (Exception)
-            {
-                return InternalServerError();
-            }
-        }
-
-        [Route("messages/{id}")]
-        public IHttpActionResult Patch(int id, [FromBody]JsonPatchDocument<DTO.Message> messagePatchDocument)
-        {
-            try
-            {
-                // find 
-                if (messagePatchDocument == null)
-                    return BadRequest();
-
-                var message = _repository.GetMessage(id);
-                if (message == null)
-                    return NotFound();
-
-                //// map
-                var msg = _messageFactory.CreateMessage(message);
-
-                // apply changes to the DTO
-                messagePatchDocument.ApplyTo(msg);
-
-                // map the DTO with applied changes to the entity, & update
-                var result = _repository.UpdateMessage(_messageFactory.CreateMessage(msg));
-
-                if (result.Status == RepositoryActionStatus.Updated)
-                {
-                    // map to dto
-                    var updatedMessage = _messageFactory.CreateMessage(result.Entity);
-                    return Ok(updatedMessage);
-                }
-
-                return BadRequest();
-            }
-            catch (Exception)
-            {
-                return InternalServerError();
-            }
-        }
-
+        } 
     }
 }

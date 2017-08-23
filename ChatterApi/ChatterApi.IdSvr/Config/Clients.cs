@@ -19,9 +19,23 @@ namespace ChatterApi.IdSvr.Config
                     ClientId = "mvc",
                     Flow = Flows.Hybrid,
                     RequireConsent = true,
-                    RedirectUris = new List<string> { ChatterApiConstants.ChatterApiClient }
-                    
+                    RedirectUris = new List<string> { ChatterApiConstants.ChatterApiClient },
+                    AccessTokenType = AccessTokenType.Jwt,
+                    AccessTokenLifetime = 60,
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+                    AbsoluteRefreshTokenLifetime = 86400, // one day
+                    SlidingRefreshTokenLifetime = 43200,
+                },
 
+                new Client
+                {
+                    Enabled = true,
+                    ClientName = "Native Client (Implicit Flow)",
+                    ClientId = "native",
+                    Flow = Flows.Implicit,
+                    RequireConsent = true,
+                    RedirectUris = new List<string> { ChatterApiConstants.ChatterApiMobile },
+                    AllowedScopes = new List<string> { StandardScopes.OpenId.ToString(), "roles", "chatterapi" }
                 }
             };
         }

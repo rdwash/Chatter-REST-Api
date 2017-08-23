@@ -20,8 +20,12 @@ namespace ChatterApi.IdSvr.Config
                     Subject = "1",
                     Claims = new []
                     {
-                        new Claim("GivenName", "Rob"),
-                        new Claim("FamilyName", "Washington")
+                        new Claim(ClaimTypes.GivenName, "Rob"),
+                        new Claim(ClaimTypes.Surname, "Washington"),
+                        new Claim(ClaimTypes.Role, "WebReadUser"),
+                        new Claim(ClaimTypes.Role, "WebWriteUser"),
+                        new Claim(ClaimTypes.Role, "MobileReadUser"),
+                        new Claim(ClaimTypes.Role, "MobileWriteUser")
                     }
                 },
 
@@ -32,8 +36,10 @@ namespace ChatterApi.IdSvr.Config
                     Subject = "2",
                     Claims = new []
                     {
-                        new Claim("GivenName", "David"),
-                        new Claim("FamilyName", "Washington")
+                        new Claim(ClaimTypes.GivenName, "David"),
+                        new Claim(ClaimTypes.Surname, "Washington"),
+                        new Claim(ClaimTypes.Role, "WebReadUser"),
+                        new Claim(ClaimTypes.Role, "MobileReadUser")
                     }
                 }
 

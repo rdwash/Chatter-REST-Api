@@ -17,7 +17,5 @@ namespace ChatterApi.Domain
         IQueryable<Message> GetMessages(int userId);
 
         RepositoryActionResult<Message> InsertMessage(Message message);
-        RepositoryActionResult<Message> UpdateMessage(Message chatMessage);
-        RepositoryActionResult<Message> DeleteMessage(int id);
     }
 }

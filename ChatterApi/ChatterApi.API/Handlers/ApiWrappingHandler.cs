@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -37,12 +38,12 @@ namespace ChatterApi.API.Handlers
                 }
             }
 
-            var newResponse = request.CreateResponse(response.StatusCode, new ApiResponse(response.StatusCode, content, errorMessage));
+            var newResponse = request.CreateResponse(response.StatusCode, new ApiResponse(response.StatusCode, content, errorMessage), new MediaTypeHeaderValue("application/vnd.api+json"));
 
             foreach (var header in response.Headers)
-            {
+            {           
                 newResponse.Headers.Add(header.Key, header.Value);
-            }
+            }            
 
             return newResponse;
         }        

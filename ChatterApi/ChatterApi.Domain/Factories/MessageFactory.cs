@@ -44,10 +44,22 @@ namespace ChatterApi.Domain.Factories
         {
             return new Message()
             {
-                Id = message.Id,
+                //Id = message.Id,
                 Type = message.Type,
                 ChatMessage = message.Attributes.Message,                
                 UserId = message.Relationships.Creator.Data.Id
+            };
+        }
+
+        public Message CreateMessage(DTO.IncomingMessage message)
+        {
+            return new Message()
+            {
+                //Id = message.Id,
+                Type = message.Data.Type,
+                ChatMessage = message.Data.Attributes.Message,
+                Created_At = DateTime.UtcNow,
+                UserId = 1
             };
         }
     }
