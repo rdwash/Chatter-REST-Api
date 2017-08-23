@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using ChatterApi.Constants;
 using ChatterApi.Domain;
 using ChatterApi.Domain.Entities;
 using ChatterApi.Domain.Factories;
@@ -23,25 +24,34 @@ namespace ChatterApi.API.Controllers
         }
 
         [Route("sessions")]
+        public IHttpActionResult Get()
+        {
+            return Redirect(ChatterApiConstants.IdSrvAuthorize);
+        }
+
+        [Route("sessions")]
         public IHttpActionResult Post([FromBody]DTO.Message message)
         {
+            
             try
             {
-                if (message == null)
-                    return BadRequest();
+                return Redirect(ChatterApiConstants.IdSrvAuthorize);
 
-                // map
-                var msg = _messageFactory.CreateMessage(message);
+                //if (message == null)
+                //    return BadRequest();
 
-                var result = _repository.InsertMessage(msg);
-                if (result.Status == RepositoryActionStatus.Created)
-                {
-                    // map to dto
-                    var newMsg = _messageFactory.CreateMessage(result.Entity);
-                    return Created(Request.RequestUri + "/" + newMsg.Id.ToString(), newMsg);
-                }
+                //// map
+                //var msg = _messageFactory.CreateMessage(message);
 
-                return BadRequest();
+                //var result = _repository.InsertMessage(msg);
+                //if (result.Status == RepositoryActionStatus.Created)
+                //{
+                //    // map to dto
+                //    var newMsg = _messageFactory.CreateMessage(result.Entity);
+                //    return Created(Request.RequestUri + "/" + newMsg.Id.ToString(), newMsg);
+                //}
+
+                //return BadRequest();
             }
             catch (Exception)
             {

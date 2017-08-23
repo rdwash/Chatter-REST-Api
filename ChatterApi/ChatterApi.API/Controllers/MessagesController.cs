@@ -36,25 +36,6 @@ namespace ChatterApi.API.Controllers
         {
             try
             {
-                //Claim iss = null, sub = null;
-                //string userId;
-                //var identity = this.User.Identity as ClaimsIdentity;
-
-                //if(identity != null)
-                //{
-                //    iss = identity.FindFirst("iss");
-                //    sub = identity.FindFirst("sub");
-                //}
-
-                //if(iss != null && sub != null)
-                //{
-                //    userId = iss.Value + "_" + sub.Value;
-                //}
-                //else
-                //{
-                //    return StatusCode(HttpStatusCode.Forbidden);
-                //}
-
                 var msgs = _repository.GetMessages();
 
                 if (msgs == null || !msgs.Any())
